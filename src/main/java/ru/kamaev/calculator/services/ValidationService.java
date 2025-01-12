@@ -1,6 +1,5 @@
-package ru.kamaev.calculator.offers;
+package ru.kamaev.calculator.services;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.stereotype.Service;
 import ru.kamaev.calculator.dto.EmploymentDto;
 import ru.kamaev.calculator.dto.LoanStatementRequestDto;
