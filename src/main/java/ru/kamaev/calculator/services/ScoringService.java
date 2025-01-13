@@ -2,6 +2,7 @@ package ru.kamaev.calculator.services;
 
 import ru.kamaev.calculator.dto.CreditDto;
 import ru.kamaev.calculator.dto.EmploymentDto;
+import ru.kamaev.calculator.dto.PaymentScheduleElementDto;
 import ru.kamaev.calculator.dto.ScoringDataDto;
 import ru.kamaev.calculator.enums.EmploymentStatus;
 import ru.kamaev.calculator.enums.Gender;
@@ -13,8 +14,11 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 public class ScoringService {
@@ -73,6 +77,16 @@ public class ScoringService {
             rate = rate.add(BigDecimal.valueOf(7));
         }
 
+        BigDecimal psk = calculateMonthlyPayment(calculateTotalAmount(scoringDataDto.getAmount(), scoringDataDto.getIsInsuranceEnabled()), scoringDataDto.getTerm(), new BigDecimal(scoringDataDto.getTerm())).multiply(new BigDecimal(scoringDataDto.getTerm()));
+        creditDto.setAmount(calculateTotalAmount(scoringDataDto.getAmount(), scoringDataDto.getIsInsuranceEnabled()));
+        creditDto.setTerm(scoringDataDto.getTerm());
+        creditDto.setMonthlyPayment(calculateMonthlyPayment(calculateTotalAmount(scoringDataDto.getAmount(),scoringDataDto.getIsInsuranceEnabled()), scoringDataDto.getTerm(), rate));
+        creditDto.setRate(rate);
+        creditDto.setPsk(psk);
+        creditDto.setIsInsuranceEnabled(scoringDataDto.getIsInsuranceEnabled());
+        creditDto.setIsSalaryClient(scoringDataDto.getIsSalaryClient());
+        creditDto.setPaymentSchedule(creatingPaymentSchedule(calculateTotalAmount(scoringDataDto.getAmount(),scoringDataDto.getIsInsuranceEnabled()), scoringDataDto.getTerm(), rate, LocalDate.now()));
+        return creditDto;
     }
 
     // Данные для расчета ставки, ежемесячного платежа и итоговой суммы
@@ -98,6 +112,38 @@ public class ScoringService {
         } else {
             return rate.subtract(insuranceRateDecrease).subtract(salaryClientRateDecrease);
         }
+    }
+    public BigDecimal calculateMonthlyPayment(BigDecimal totalAmount, Integer term, BigDecimal rate) {
+        return (totalAmount.multiply(BigDecimal.ONE.add(rate.divide(new BigDecimal(100),2, RoundingMode.HALF_UP)))).divide(new BigDecimal(term),2, RoundingMode.HALF_UP);
+    }
+    public List<PaymentScheduleElementDto> creatingPaymentSchedule(
+            BigDecimal totalAmount,
+            Integer term,
+            BigDecimal rate,
+            LocalDate startDate
+    ) {
+        List<PaymentScheduleElementDto> paymentSchedule = new ArrayList<>();
+
+        // Ежемесячная процентная ставка
+        BigDecimal monthlyRate = rate.divide(BigDecimal.valueOf(12),6,RoundingMode.HALF_UP).divide(BigDecimal.valueOf(100),6,RoundingMode.HALF_UP);
+        BigDecimal monthlyPayment = calculateMonthlyPayment(totalAmount, term, rate);
+        BigDecimal remainingDebt = totalAmount;
+
+        for (int i = 0; i < term; i++) {
+            BigDecimal interestPayment = remainingDebt.multiply(monthlyRate).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal debtPayment = monthlyPayment.subtract(interestPayment).setScale(2, RoundingMode.HALF_UP);
+            remainingDebt = remainingDebt.subtract(debtPayment).setScale(2, RoundingMode.HALF_UP);
+
+            PaymentScheduleElementDto paymentScheduleElement = new PaymentScheduleElementDto();
+            paymentScheduleElement.setInterestPayment(interestPayment);
+            paymentScheduleElement.setNumber(i);
+            paymentScheduleElement.setDate(startDate.plusMonths(i - 1));
+            paymentScheduleElement.setTotalPayment(monthlyPayment);
+            paymentScheduleElement.setDebtPayment(debtPayment);
+            paymentScheduleElement.setInterestPayment(remainingDebt.compareTo(BigDecimal.ZERO) < 0 ? BigDecimal.ZERO : remainingDebt);
+            paymentSchedule.add(paymentScheduleElement);
+        }
+        return paymentSchedule;
     }
 
 }
