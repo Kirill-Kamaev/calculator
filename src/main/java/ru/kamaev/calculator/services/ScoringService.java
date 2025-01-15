@@ -1,5 +1,6 @@
 package ru.kamaev.calculator.services;
 
+import org.springframework.stereotype.Service;
 import ru.kamaev.calculator.dto.CreditDto;
 import ru.kamaev.calculator.dto.EmploymentDto;
 import ru.kamaev.calculator.dto.PaymentScheduleElementDto;
@@ -21,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+
+@Service
 public class ScoringService {
     // Файл с данными
     File propertiesFile = new File("calculator/src/main/resources/data.properties");
