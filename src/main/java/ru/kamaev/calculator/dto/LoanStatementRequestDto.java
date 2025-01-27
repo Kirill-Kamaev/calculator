@@ -2,6 +2,7 @@ package ru.kamaev.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +12,6 @@ import java.time.LocalDate;
 
 @Schema(description = "Сущность первичной заявки пользователя на кредит (для прескоринга")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class LoanStatementRequestDto {
     @Schema(pattern = "r'^([2-9]\\d{4}|[1-9]\\d{5,})$", description = "Сумма кредита >= 20_000", example = "20000")
     private BigDecimal amount;
@@ -32,4 +31,5 @@ public class LoanStatementRequestDto {
     private String passportSeries;
     @Schema(pattern = "^[0-9]{6}$", description = "Номер паспорта", example = "567890")
     private String passportNumber;
+
 }

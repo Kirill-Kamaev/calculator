@@ -2,6 +2,7 @@ package ru.kamaev.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.kamaev.calculator.enums.Gender;
@@ -9,10 +10,9 @@ import ru.kamaev.calculator.enums.MaritalStatus;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Schema(description = "Сущность заявки пользователя на кредит (для скоринга)")
+@Data
 public class ScoringDataDto {
     @Schema(pattern = "r'^([2-9]\\d{4}|[1-9]\\d{5,})$", description = "Сумма кредита + страховка", example = "120000")
     private BigDecimal amount;
@@ -48,4 +48,6 @@ public class ScoringDataDto {
     private Boolean isInsuranceEnabled;
     @Schema(description = "Страховка", example = "true")
     private Boolean isSalaryClient;
+
+
 }

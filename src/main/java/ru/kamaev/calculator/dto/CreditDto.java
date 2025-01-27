@@ -2,16 +2,16 @@ package ru.kamaev.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Schema(description = "Итоговое предложение после скоринга")
+@Data
 public class CreditDto {
     @Schema(description = "Итоговый платеж", example = "20000")
     private BigDecimal amount;
@@ -29,4 +29,5 @@ public class CreditDto {
     private Boolean isSalaryClient;
     @Schema(description = "График ежемесячных платежей")
     private List<PaymentScheduleElementDto> paymentSchedule;
+
 }

@@ -2,6 +2,7 @@ package ru.kamaev.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,10 +10,8 @@ import java.math.BigDecimal;
 import java.util.UUID;
 
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Schema(description = "Сущность кредитного предложения после прескоринга")
+@Data
 public class LoanOfferDto {
     @Schema(description = "Идентификатор кредитного предложения", example = "e4f02c8b-1a35-47be-b07c-c69e57d33e70")
     private UUID statementId;
@@ -30,5 +29,6 @@ public class LoanOfferDto {
     private Boolean isInsuranceEnabled;
     @Schema(description = "Страховка", example = "false")
     private Boolean isSalaryClient;
-
 }
+
+

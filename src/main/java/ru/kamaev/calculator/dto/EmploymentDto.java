@@ -2,6 +2,7 @@ package ru.kamaev.calculator.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.kamaev.calculator.enums.EmploymentStatus;
@@ -9,10 +10,9 @@ import ru.kamaev.calculator.enums.Position;
 
 import java.math.BigDecimal;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+
 @Schema(description = "Место работы")
+@Data
 public class EmploymentDto {
     @Schema(description = "Рабочий статус", example = "EMPLOYED")
     private EmploymentStatus employmentStatus;
@@ -26,4 +26,6 @@ public class EmploymentDto {
     private Integer workExperienceTotal;
     @Schema(description = "Текущий стаж работы (месяцев)", example = "5")
     private Integer workExperienceCurrent;
+
 }
+
